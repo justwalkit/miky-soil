@@ -23,7 +23,7 @@ class NavWalker extends \Walker_Nav_Menu {
   private $archive; // Stores the archive page for current URL
 
   public function __construct() {
-    add_filter('nav_menu_css_class', array($this, 'cssClasses'), 10, 2);
+    add_filter('nav_menu_css_class', array($this, 'cssClasses'), 10, 3);
     add_filter('nav_menu_item_id', '__return_null');
     $cpt           = get_post_type();
     $this->cpt     = in_array($cpt, get_post_types(array('_builtin' => false)));
@@ -56,7 +56,7 @@ class NavWalker extends \Walker_Nav_Menu {
   }
   // @codingStandardsIgnoreEnd
 
-  public function cssClasses($classes, $item) {
+  public function cssClasses($classes, $item, $args) {
     $slug = sanitize_title($item->title);
 
     if ($this->cpt) {
@@ -65,6 +65,10 @@ class NavWalker extends \Walker_Nav_Menu {
       if (Utils\url_compare($this->archive, $item->url)) {
         $classes[] = 'active';
       }
+    }
+    
+    if ($args->walker->has_children) {
+      $classes[] = 'has-children';
     }
 
     $classes = preg_replace('/(current(-menu-|[-_]page[-_])(item|parent|ancestor))/', 'active', $classes);
