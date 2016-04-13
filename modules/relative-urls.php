@@ -10,11 +10,11 @@ use Roots\Soil\Utils;
  * WordPress likes to use absolute URLs on everything - let's clean that up.
  * Inspired by http://www.456bereastreet.com/archive/201010/how_to_make_wordpress_urls_root_relative/
  *
- * You can enable/disable this feature in functions.php (or lib/config.php if you're using Sage):
+ * You can enable/disable this feature in functions.php (or lib/setup.php if you're using Sage):
  * add_theme_support('soil-relative-urls');
  */
- 
-if (is_admin() || preg_match('/sitemap(_index)?\.xml/', $_SERVER['REQUEST_URI']) || in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php'])) {
+
+if (is_admin() || isset($_GET['sitemap']) || in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php'])) {
   return;
 }
 
@@ -37,3 +37,10 @@ $root_rel_filters = apply_filters('soil/relative-url-filters', [
   'style_loader_src'
 ]);
 Utils\add_filters($root_rel_filters, 'Roots\\Soil\\Utils\\root_relative_url');
+
+add_filter('wp_calculate_image_srcset', function ($sources) {
+  foreach ($sources as $source => $src) {
+    $sources[$source]['url'] = \Roots\Soil\Utils\root_relative_url($src['url']);
+  }
+  return $sources;
+});
