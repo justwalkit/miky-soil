@@ -77,7 +77,7 @@ class NavWalker extends \Walker_Nav_Menu {
 
     // Re-add core `menu-item-has-children` class on parent elements
     if ($item->is_subitem) {
-      $classes[] = 'menu-item-has-children';
+      $classes[] = 'menu-item-has-children has-children';
     }
 
     // Add `menu-<slug>` class
